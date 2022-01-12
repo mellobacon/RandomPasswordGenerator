@@ -5,22 +5,22 @@ namespace RandomPasswordGenerator;
 
 public class PasswordGenerator
 {
-    public bool HasSpecialCharacters = false;
-    public int Length = 6;
+    public bool HasSpecialCharacters = true;
+    public int Length = 8;
     public bool WithNumbers = true;
     public int MinSpecialChars = 1;
     public int MinNumbers = 1;
     
-    private readonly Random random = new();
-    private readonly StringBuilder sb = new();
+    private readonly Random _random = new();
+    private readonly StringBuilder _sb = new();
 
     public void GetNewPassword()
     {
-        string? password = GenerateNewPassword();
+        string? password = CheckPassword();
         if (password is not null)
         {
-            Console.Write($"Generated password: ");
-            foreach (var c in password)
+            Console.Write("Generated password: ");
+            foreach (char c in password)
             {
                 if (c.EqualsAny("!@#$%^&*"))
                 {
@@ -36,11 +36,11 @@ public class PasswordGenerator
         }
         Console.WriteLine();
     }
-    private string? GenerateNewPassword()
+    private string? CheckPassword()
     {
         string? password = GeneratePassword();
-        string numbers = "1234567890";
-        string specialchars = "!@#$%^&*";
+        const string numbers = "1234567890";
+        const string specialchars = "!@#$%^&*";
         if (password is null)
         {
             return null;
@@ -51,11 +51,11 @@ public class PasswordGenerator
 
         if (!password.CheckCount(numbers, MinNumbers))
         {
-            password = GenerateNewPassword();
+            password = CheckPassword();
         }
         if (!password.CheckCount(specialchars, MinSpecialChars))
         {
-            password = GenerateNewPassword();
+            password = CheckPassword();
         }
 
         return password;
@@ -63,10 +63,10 @@ public class PasswordGenerator
 
     private string? GeneratePassword()
     {
-        sb.Clear();
-        if (Length <= 4)
+        _sb.Clear();
+        if (Length < 5)
         {
-            PrintError("Password must be atleast 5 characters");
+            PrintError("Password must be at least 5 characters");
             return null;
         }
 
@@ -76,37 +76,37 @@ public class PasswordGenerator
         {
             Length += 3;
         }
-        for (int i = 0; i < Length; i++)
+        for (var _ = 0; _ < Length; _++)
         {
-            int randomint = random.Next(functions.Length);
-            sb.Append(functions[randomint].DynamicInvoke());
+            int randomint = _random.Next(functions.Length);
+            _sb.Append(functions[randomint].DynamicInvoke());
         }
 
-        return sb.ToString();
+        return _sb.ToString();
     }
     
     private char GetUpperCase()
     {
         const string uppercase = "ABCDEFGHIGKLMNOPQRSTUVWXYZ";
-        return uppercase[random.Next(uppercase.Length)];
+        return uppercase[_random.Next(uppercase.Length)];
     }
 
     private char GetLowerCase()
     {
         const string uppercase = "ABCDEFGHIGKLMNOPQRSTUVWXYZ";
         string lowercase = uppercase.ToLower();
-        return lowercase[random.Next(lowercase.Length)];
+        return lowercase[_random.Next(lowercase.Length)];
     }
 
     private char GetSpecialChars()
     {
-        string specialchars = "!@#$%^&*";
-        return specialchars[random.Next(specialchars.Length)];
+        const string specialchars = "!@#$%^&*";
+        return specialchars[_random.Next(specialchars.Length)];
     }
 
     private int GetNumber()
     {
-        int number = random.Next(0, 9);
+        int number = _random.Next(0, 9);
         return number;
     }
 

@@ -12,8 +12,8 @@ public static class Custom
 
     public static bool EqualsAny(this char c, string chars)
     {
-        bool check = false;
-        foreach (var _ in chars.Where(ch => c == ch))
+        var check = false;
+        foreach (char _ in chars.Where(ch => c == ch))
         {
             check = true;
         }
